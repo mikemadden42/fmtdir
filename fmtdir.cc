@@ -5,13 +5,16 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 namespace fs = std::filesystem;
 
 bool isHidden(const fs::path& p) {
 #ifdef _WIN32
-    // On Windows, hidden files start with a dot or are marked as hidden
-    return p.filename().string()[0] == '.' ||
-           (fs::status(p).permissions() & fs::perms::hidden) != fs::perms::none;
+    // On Windows, check if the file is hidden based on its attributes
+    return (GetFileAttributesW(p.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0;
 #else
     // On Unix-like systems, hidden files start with a dot
     return p.filename().string()[0] == '.';
