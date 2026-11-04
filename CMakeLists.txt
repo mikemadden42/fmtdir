@@ -43,3 +43,10 @@ add_test(NAME prints-usage-without-arguments
 set_tests_properties(prints-usage-without-arguments PROPERTIES
     PASS_REGULAR_EXPRESSION "Usage:"
 )
+
+# LICENSE has no extension
+add_test(NAME labels-files-without-extension
+    COMMAND fmtdir ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(labels-files-without-extension PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\(no extension\\):"
+)
