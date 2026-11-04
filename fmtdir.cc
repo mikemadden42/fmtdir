@@ -14,7 +14,9 @@ namespace fs = std::filesystem;
 bool isHidden(const fs::path& p) {
 #ifdef _WIN32
     // On Windows, check if the file is hidden based on its attributes
-    return (GetFileAttributesW(p.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0;
+    DWORD attrs = GetFileAttributesW(p.c_str());
+    return attrs != INVALID_FILE_ATTRIBUTES &&
+           (attrs & FILE_ATTRIBUTE_HIDDEN) != 0;
 #else
     // On Unix-like systems, hidden files start with a dot
     return p.filename().string()[0] == '.';

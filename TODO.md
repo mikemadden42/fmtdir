@@ -4,7 +4,7 @@
 
 - [x] **Return a non-zero exit code on filesystem errors** (`fmtdir.cc`, `catch` block).
   `fmtdir /nonexistent` prints the error but exits 0. Add `return 1;` in the `catch`.
-- [ ] **Windows: a failed attribute lookup counts as "hidden"** (`isHidden`).
+- [x] **Windows: a failed attribute lookup counts as "hidden"** (`isHidden`).
   `GetFileAttributesW` returns `INVALID_FILE_ATTRIBUTES` (`0xFFFFFFFF`) on failure, which
   has the hidden bit set, so unreadable files are silently skipped. Fix:
   ```cpp
