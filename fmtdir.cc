@@ -6,6 +6,8 @@
 #include <vector>
 
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 #endif
 
@@ -84,7 +86,7 @@ int main(int argc, char* argv[]) {
         std::map<std::string, std::vector<std::string>> fileGroups;
 
         for (const auto& entry : fs::directory_iterator(path)) {
-            if (fs::is_regular_file(entry.path()) &&
+            if (entry.is_regular_file() &&
                 (includeHidden || !isHidden(entry.path()))) {
                 // Group files by extension, ignoring case. Use UTF-8 so names
                 // that the Windows code page can't represent don't throw.
@@ -95,20 +97,23 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // Sort each group by file name, ignoring case
+        // Sort each group by file name, ignoring case, and output it, with a
+        // blank line between groups
+        bool firstGroup = true;
         for (auto& group : fileGroups) {
             std::sort(group.second.begin(), group.second.end(),
                       lessIgnoringCase);
-        }
 
-        // Output the sorted groups
-        for (const auto& group : fileGroups) {
+            if (!firstGroup) {
+                std::cout << "\n";
+            }
+            firstGroup = false;
+
             std::cout << (group.first.empty() ? "(no extension)" : group.first)
                       << ":\n";
             for (const auto& file : group.second) {
                 std::cout << file << "\n";
             }
-            std::cout << "\n";
         }
     } catch (const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
