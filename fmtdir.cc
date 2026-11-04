@@ -23,25 +23,44 @@ bool isHidden(const fs::path& p) {
 #endif
 }
 
+void printUsage(std::ostream& out, const char* program) {
+    out << "Usage: " << program << " [options] <directory>\n"
+        << "Options:\n"
+        << "  -a, --all, --hidden   Include hidden files\n"
+        << "  -h, --help            Show this help\n";
+}
+
 int main(int argc, char* argv[]) {
-    if (argc < 2 || argc > 3) {
-        std::cerr << "Usage: " << argv[0] << " <directory> [option]\n"
-                  << "Options:\n"
-                  << "  -h, --hidden   Include hidden files\n";
-        return 1;
-    }
-
-    const std::string path = argv[1];
+    std::string path;
     bool includeHidden = false;
+    bool optionsDone = false;
 
-    if (argc == 3) {
-        std::string option = argv[2];
-        if (option == "-h" || option == "--hidden") {
-            includeHidden = true;
+    // Options may appear before or after the directory; "--" ends options
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg = argv[i];
+        if (!optionsDone && arg.size() > 1 && arg[0] == '-') {
+            if (arg == "--") {
+                optionsDone = true;
+            } else if (arg == "-a" || arg == "--all" || arg == "--hidden") {
+                includeHidden = true;
+            } else if (arg == "-h" || arg == "--help") {
+                printUsage(std::cout, argv[0]);
+                return 0;
+            } else {
+                std::cerr << "Unknown option: " << arg << "\n";
+                return 1;
+            }
+        } else if (path.empty()) {
+            path = arg;
         } else {
-            std::cerr << "Unknown option: " << option << "\n";
+            std::cerr << "Only one directory may be given\n";
             return 1;
         }
+    }
+
+    if (path.empty()) {
+        printUsage(std::cerr, argv[0]);
+        return 1;
     }
 
     try {
