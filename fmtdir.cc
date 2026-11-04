@@ -42,28 +42,29 @@ bool lessIgnoringCase(const std::string& a, const std::string& b) {
     return lowerA != lowerB ? lowerA < lowerB : a < b;
 }
 
-void printUsage(std::ostream& out, const char* program) {
+void printUsage(std::ostream& out, const std::string& program) {
     out << "Usage: " << program << " [options] <directory>\n"
         << "Options:\n"
         << "  -a, --all, --hidden   Include hidden files\n"
         << "  -h, --help            Show this help\n";
 }
 
-int main(int argc, char* argv[]) {
+// Arguments are UTF-8, including the program name in args[0]
+int run(const std::vector<std::string>& args) {
     std::string path;
     bool includeHidden = false;
     bool optionsDone = false;
 
     // Options may appear before or after the directory; "--" ends options
-    for (int i = 1; i < argc; ++i) {
-        const std::string arg = argv[i];
+    for (std::size_t i = 1; i < args.size(); ++i) {
+        const std::string& arg = args[i];
         if (!optionsDone && arg.size() > 1 && arg[0] == '-') {
             if (arg == "--") {
                 optionsDone = true;
             } else if (arg == "-a" || arg == "--all" || arg == "--hidden") {
                 includeHidden = true;
             } else if (arg == "-h" || arg == "--help") {
-                printUsage(std::cout, argv[0]);
+                printUsage(std::cout, args[0]);
                 return 0;
             } else {
                 std::cerr << "Unknown option: " << arg << "\n";
@@ -78,14 +79,14 @@ int main(int argc, char* argv[]) {
     }
 
     if (path.empty()) {
-        printUsage(std::cerr, argv[0]);
+        printUsage(std::cerr, args[0]);
         return 1;
     }
 
     try {
         std::map<std::string, std::vector<std::string>> fileGroups;
 
-        for (const auto& entry : fs::directory_iterator(path)) {
+        for (const auto& entry : fs::directory_iterator(fs::u8path(path))) {
             if (entry.is_regular_file() &&
                 (includeHidden || !isHidden(entry.path()))) {
                 // Group files by extension, ignoring case. Use UTF-8 so names
@@ -122,3 +123,34 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+#ifdef _WIN32
+// Use wmain so arguments outside the Windows code page arrive intact
+int wmain(int argc, wchar_t* argv[]) {
+    std::vector<std::string> args;
+    try {
+        for (int i = 0; i < argc; ++i) {
+            args.push_back(fs::path(argv[i]).u8string());
+        }
+    } catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+        return 1;
+    }
+
+    // Output is UTF-8, so have the console show it as UTF-8, and restore the
+    // console's code page afterwards since it's shared with the parent shell
+    const UINT oldCodePage = GetConsoleOutputCP();
+    if (oldCodePage != 0) {
+        SetConsoleOutputCP(CP_UTF8);
+    }
+    const int result = run(args);
+    if (oldCodePage != 0) {
+        SetConsoleOutputCP(oldCodePage);
+    }
+    return result;
+}
+#else
+int main(int argc, char* argv[]) {
+    return run(std::vector<std::string>(argv, argv + argc));
+}
+#endif
