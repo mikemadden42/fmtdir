@@ -35,16 +35,16 @@
 
 ## Build and CI
 
-- [ ] Stop overwriting `CMAKE_CXX_FLAGS`; use
+- [x] Stop overwriting `CMAKE_CXX_FLAGS`; use
   `target_compile_options(fmtdir PRIVATE -Wall -Wextra -pedantic)`.
-- [ ] Add `set(CMAKE_CXX_STANDARD_REQUIRED ON)`.
+- [x] Add `set(CMAKE_CXX_STANDARD_REQUIRED ON)`.
 - [x] Add a CI matrix for `ubuntu`, `macos` and `windows` so the platform-specific
   code paths are built and tested.
 - [x] Bump `actions/checkout@v3` to v4 or later (v3 runs on a deprecated Node version).
-- [ ] Define `WIN32_LEAN_AND_MEAN` and `NOMINMAX` before including `<Windows.h>`.
+- [x] Define `WIN32_LEAN_AND_MEAN` and `NOMINMAX` before including `<Windows.h>`.
 
 ## Small cleanups
 
-- [ ] Use `entry.is_regular_file()` instead of `fs::is_regular_file(entry.path())`
+- [x] Use `entry.is_regular_file()` instead of `fs::is_regular_file(entry.path())`
   to reuse the cached status and avoid an extra `stat` per file.
-- [ ] Merge the sort and print loops, and drop the trailing blank line after the last group.
+- [x] Merge the sort and print loops, and drop the trailing blank line after the last group.

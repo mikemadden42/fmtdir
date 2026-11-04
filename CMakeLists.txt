@@ -3,11 +3,13 @@ cmake_minimum_required(VERSION 3.10)
 project(fmtdir CXX)
 
 set (CMAKE_CXX_STANDARD 17)
-if (NOT MSVC)
-  set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
-endif()
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(fmtdir fmtdir.cc)
+
+if (NOT MSVC)
+  target_compile_options(fmtdir PRIVATE -Wall -Wextra -pedantic)
+endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     set_target_properties(fmtdir PROPERTIES
