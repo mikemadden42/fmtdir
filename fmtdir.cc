@@ -23,6 +23,23 @@ bool isHidden(const fs::path& p) {
 #endif
 }
 
+// Lowercase ASCII letters only; other bytes (including UTF-8) are unchanged
+std::string toLowerAscii(std::string s) {
+    for (auto& c : s) {
+        if (c >= 'A' && c <= 'Z') {
+            c = static_cast<char>(c - 'A' + 'a');
+        }
+    }
+    return s;
+}
+
+// Order names ignoring case, then by exact spelling so the order is stable
+bool lessIgnoringCase(const std::string& a, const std::string& b) {
+    const std::string lowerA = toLowerAscii(a);
+    const std::string lowerB = toLowerAscii(b);
+    return lowerA != lowerB ? lowerA < lowerB : a < b;
+}
+
 void printUsage(std::ostream& out, const char* program) {
     out << "Usage: " << program << " [options] <directory>\n"
         << "Options:\n"
@@ -69,17 +86,19 @@ int main(int argc, char* argv[]) {
         for (const auto& entry : fs::directory_iterator(path)) {
             if (fs::is_regular_file(entry.path()) &&
                 (includeHidden || !isHidden(entry.path()))) {
-                // Group files by extension. Use UTF-8 so names that the
-                // Windows code page can't represent don't throw.
-                std::string extension = entry.path().extension().u8string();
+                // Group files by extension, ignoring case. Use UTF-8 so names
+                // that the Windows code page can't represent don't throw.
+                std::string extension =
+                    toLowerAscii(entry.path().extension().u8string());
                 fileGroups[extension].push_back(
                     entry.path().filename().u8string());
             }
         }
 
-        // Sort each group by file name
+        // Sort each group by file name, ignoring case
         for (auto& group : fileGroups) {
-            std::sort(group.second.begin(), group.second.end());
+            std::sort(group.second.begin(), group.second.end(),
+                      lessIgnoringCase);
         }
 
         // Output the sorted groups
