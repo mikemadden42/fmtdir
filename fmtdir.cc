@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
         }
     } catch (const fs::filesystem_error& ex) {
         std::cerr << ex.what() << std::endl;
+        return 1;
     }
 
     return 0;
