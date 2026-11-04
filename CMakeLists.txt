@@ -85,6 +85,30 @@ set_tests_properties(double-dash-ends-options PROPERTIES
     FAIL_REGULAR_EXPRESSION "Usage:"
 )
 
+# Files with mixed-case names and extensions. The base names differ, so they
+# can coexist on case-insensitive file systems (macOS, Windows).
+set(CASE_TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/case-test)
+file(MAKE_DIRECTORY ${CASE_TEST_DIR})
+file(TOUCH
+    ${CASE_TEST_DIR}/Zebra.txt
+    ${CASE_TEST_DIR}/apple.txt
+    ${CASE_TEST_DIR}/photo.JPG
+    ${CASE_TEST_DIR}/image.jpg
+)
+
+add_test(NAME groups-extensions-ignoring-case
+    COMMAND fmtdir ${CASE_TEST_DIR})
+set_tests_properties(groups-extensions-ignoring-case PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\.jpg:[\r\n]+image\\.jpg[\r\n]+photo\\.JPG"
+    FAIL_REGULAR_EXPRESSION "\\.JPG:"
+)
+
+add_test(NAME sorts-names-ignoring-case
+    COMMAND fmtdir ${CASE_TEST_DIR})
+set_tests_properties(sorts-names-ignoring-case PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\.txt:[\r\n]+apple\\.txt[\r\n]+Zebra\\.txt"
+)
+
 # LICENSE has no extension
 add_test(NAME labels-files-without-extension
     COMMAND fmtdir ${CMAKE_CURRENT_SOURCE_DIR})

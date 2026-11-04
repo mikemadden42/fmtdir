@@ -28,7 +28,7 @@
 - [x] Rethink `-h`, which usually means `--help`. Consider `-a`/`--all` (the `ls`
   convention), and accept options in any position (`fmtdir -h .` currently treats `-h`
   as the directory).
-- [ ] Decide whether extensions should be grouped case-insensitively (`.TXT` vs `.txt`)
+- [x] Decide whether extensions should be grouped case-insensitively (`.TXT` vs `.txt`)
   and whether sorting should ignore case.
 - [ ] Update the README: the tool lists files rather than moving them, and the README
   should include build and usage instructions.
