@@ -11,7 +11,7 @@
   DWORD attrs = GetFileAttributesW(p.c_str());
   return attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_HIDDEN);
   ```
-- [ ] **Windows: some filenames can crash the program.**
+- [x] **Windows: some filenames can crash the program.**
   On MSVC, `path::string()` throws `std::system_error` for names the current code page
   can't represent. Only `fs::filesystem_error` is caught, so the program terminates.
   Catch `std::exception`, or keep `fs::path` values and print with `.u8string()`.

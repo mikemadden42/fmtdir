@@ -50,10 +50,11 @@ int main(int argc, char* argv[]) {
         for (const auto& entry : fs::directory_iterator(path)) {
             if (fs::is_regular_file(entry.path()) &&
                 (includeHidden || !isHidden(entry.path()))) {
-                // Group files by extension
-                std::string extension = entry.path().extension().string();
+                // Group files by extension. Use UTF-8 so names that the
+                // Windows code page can't represent don't throw.
+                std::string extension = entry.path().extension().u8string();
                 fileGroups[extension].push_back(
-                    entry.path().filename().string());
+                    entry.path().filename().u8string());
             }
         }
 
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
             }
             std::cout << "\n";
         }
-    } catch (const fs::filesystem_error& ex) {
+    } catch (const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 1;
     }
