@@ -25,7 +25,7 @@
 
 - [x] Show files with no extension under a clear label such as `(no extension):`
   instead of a bare `:` header. With `--hidden`, dotfiles like `.bashrc` end up there too.
-- [ ] Rethink `-h`, which usually means `--help`. Consider `-a`/`--all` (the `ls`
+- [x] Rethink `-h`, which usually means `--help`. Consider `-a`/`--all` (the `ls`
   convention), and accept options in any position (`fmtdir -h .` currently treats `-h`
   as the directory).
 - [ ] Decide whether extensions should be grouped case-insensitively (`.TXT` vs `.txt`)

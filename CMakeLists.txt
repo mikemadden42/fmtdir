@@ -44,6 +44,47 @@ set_tests_properties(prints-usage-without-arguments PROPERTIES
     PASS_REGULAR_EXPRESSION "Usage:"
 )
 
+add_test(NAME prints-help
+    COMMAND fmtdir --help)
+set_tests_properties(prints-help PROPERTIES
+    PASS_REGULAR_EXPRESSION "Usage:"
+)
+
+add_test(NAME help-exits-successfully
+    COMMAND fmtdir -h)
+
+add_test(NAME fails-on-two-directories
+    COMMAND fmtdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(fails-on-two-directories PROPERTIES WILL_FAIL TRUE)
+
+# .gitignore is hidden on Unix-like systems; with -a it is listed everywhere
+add_test(NAME all-option-before-directory
+    COMMAND fmtdir -a ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(all-option-before-directory PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\.gitignore"
+)
+
+add_test(NAME all-option-after-directory
+    COMMAND fmtdir ${CMAKE_CURRENT_SOURCE_DIR} --all)
+set_tests_properties(all-option-after-directory PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\.gitignore"
+)
+
+add_test(NAME hidden-option-still-works
+    COMMAND fmtdir --hidden ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(hidden-option-still-works PROPERTIES
+    PASS_REGULAR_EXPRESSION "\\.gitignore"
+)
+
+# After "--", "-a" is a (missing) directory: the error names it, and no
+# usage message is printed
+add_test(NAME double-dash-ends-options
+    COMMAND fmtdir -- -a)
+set_tests_properties(double-dash-ends-options PROPERTIES
+    PASS_REGULAR_EXPRESSION "-a"
+    FAIL_REGULAR_EXPRESSION "Usage:"
+)
+
 # LICENSE has no extension
 add_test(NAME labels-files-without-extension
     COMMAND fmtdir ${CMAKE_CURRENT_SOURCE_DIR})
