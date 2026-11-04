@@ -65,7 +65,8 @@ int main(int argc, char* argv[]) {
 
         // Output the sorted groups
         for (const auto& group : fileGroups) {
-            std::cout << group.first << ":\n";
+            std::cout << (group.first.empty() ? "(no extension)" : group.first)
+                      << ":\n";
             for (const auto& file : group.second) {
                 std::cout << file << "\n";
             }

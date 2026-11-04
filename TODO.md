@@ -23,7 +23,7 @@
 
 ## Behavior and usability
 
-- [ ] Show files with no extension under a clear label such as `(no extension):`
+- [x] Show files with no extension under a clear label such as `(no extension):`
   instead of a bare `:` header. With `--hidden`, dotfiles like `.bashrc` end up there too.
 - [ ] Rethink `-h`, which usually means `--help`. Consider `-a`/`--all` (the `ls`
   convention), and accept options in any position (`fmtdir -h .` currently treats `-h`
