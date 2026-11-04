@@ -16,7 +16,7 @@
   can't represent. Only `fs::filesystem_error` is caught, so the program terminates.
   Catch `std::exception`, or keep `fs::path` values and print with `.u8string()`.
   (Not yet verified on Windows.)
-- [ ] **CI Test step probably fails.**
+- [x] **CI Test step probably fails.**
   The workflow runs `ctest`, but `CMakeLists.txt` has no `enable_testing()` or tests.
   Locally `ctest` exits 1 with "No test configuration file found!". Add
   `enable_testing()` and at least one test, or remove the step.
@@ -38,9 +38,9 @@
 - [ ] Stop overwriting `CMAKE_CXX_FLAGS`; use
   `target_compile_options(fmtdir PRIVATE -Wall -Wextra -pedantic)`.
 - [ ] Add `set(CMAKE_CXX_STANDARD_REQUIRED ON)`.
-- [ ] Add a CI matrix for `ubuntu`, `macos` and `windows` so the platform-specific
+- [x] Add a CI matrix for `ubuntu`, `macos` and `windows` so the platform-specific
   code paths are built and tested.
-- [ ] Bump `actions/checkout@v3` to v4 or later (v3 runs on a deprecated Node version).
+- [x] Bump `actions/checkout@v3` to v4 or later (v3 runs on a deprecated Node version).
 - [ ] Define `WIN32_LEAN_AND_MEAN` and `NOMINMAX` before including `<Windows.h>`.
 
 ## Small cleanups
