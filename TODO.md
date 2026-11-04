@@ -30,7 +30,7 @@
   as the directory).
 - [x] Decide whether extensions should be grouped case-insensitively (`.TXT` vs `.txt`)
   and whether sorting should ignore case.
-- [ ] Update the README: the tool lists files rather than moving them, and the README
+- [x] Update the README: the tool lists files rather than moving them, and the README
   should include build and usage instructions.
 
 ## Build and CI
