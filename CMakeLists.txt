@@ -11,6 +11,11 @@ if (NOT MSVC)
   target_compile_options(fmtdir PRIVATE -Wall -Wextra -pedantic)
 endif()
 
+# MinGW needs -municode to use wmain as the entry point
+if (MINGW)
+  target_link_libraries(fmtdir PRIVATE -municode)
+endif()
+
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     set_target_properties(fmtdir PROPERTIES
         OSX_ARCHITECTURES "x86_64;arm64"
@@ -110,6 +115,32 @@ add_test(NAME sorts-names-ignoring-case
 set_tests_properties(sorts-names-ignoring-case PROPERTIES
     PASS_REGULAR_EXPRESSION "\\.txt:[\r\n]+apple\\.txt[\r\n]+Zebra\\.txt"
 )
+
+# A directory and files with non-ASCII names. The patterns match the names
+# loosely, since CTest may decode the program's UTF-8 output differently on
+# Windows.
+set(UNICODE_TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/unicode-tést)
+file(MAKE_DIRECTORY ${UNICODE_TEST_DIR})
+file(TOUCH
+    ${UNICODE_TEST_DIR}/café.txt
+    ${UNICODE_TEST_DIR}/日本.md
+    ${UNICODE_TEST_DIR}/plain.txt
+)
+
+add_test(NAME accepts-non-ascii-directory
+    COMMAND fmtdir ${UNICODE_TEST_DIR})
+set_tests_properties(accepts-non-ascii-directory PROPERTIES
+    PASS_REGULAR_EXPRESSION "plain\\.txt"
+)
+
+add_test(NAME lists-non-ascii-names
+    COMMAND fmtdir ${UNICODE_TEST_DIR})
+set_tests_properties(lists-non-ascii-names PROPERTIES
+    PASS_REGULAR_EXPRESSION "caf.+\\.txt"
+)
+
+add_test(NAME lists-non-ascii-names-successfully
+    COMMAND fmtdir ${UNICODE_TEST_DIR})
 
 # LICENSE has no extension
 add_test(NAME labels-files-without-extension
